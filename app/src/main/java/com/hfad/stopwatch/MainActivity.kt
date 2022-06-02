@@ -12,6 +12,11 @@ class MainActivity : AppCompatActivity() {
     var running = false //is running or not
     var offset : Long = 0 //base offset for stopwatch to account for pause and restart action
 
+    //Keys for bundle(it's a lot like a hashmap)
+    val OFFSET_KET = "offset"
+    val RUNNING_KEY = "running"
+    val BASE_KEY = "base"
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +25,16 @@ class MainActivity : AppCompatActivity() {
 
         //Get stopwatch reference, views don't exist before setContentView
         stopwatch = findViewById(R.id.stopwatch)
+
+        //Restore previous state, if applicable
+        if(savedInstanceState != null){
+            offset = savedInstanceState.getLong(OFFSET_KET)
+            running = savedInstanceState.getBoolean(RUNNING_KEY)
+            if(running){
+                stopwatch.base = savedInstanceState.getLong(BASE_KEY)
+                stopwatch.start()
+            } else setBaseTime()
+        }
 
         //Start button starts stopwatch if it's not running
         val startButton = findViewById<Button>(R.id.start)
@@ -56,6 +71,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveOffset() {
         offset = SystemClock.elapsedRealtime() - stopwatch.base
+    }
+
+    override fun onSaveInstanceState(savedState: Bundle) {
+        savedState.putLong(OFFSET_KET,offset)
+        savedState.putBoolean(RUNNING_KEY,running)
+        savedState.putLong(BASE_KEY,stopwatch.base)
+        super.onSaveInstanceState(savedState)
     }
 }
 
