@@ -64,6 +64,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStop() {
+        //you need to call the super class whenever you override an activity function
+        super.onStop()
+        saveOffset()
+        stopwatch.stop()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        if(running){
+            setBaseTime()
+            stopwatch.start()
+            offset = 0
+        }
+
+    }
+
     //Updates the stopwatch.base time, allowing for any offset
     private fun setBaseTime() {
         stopwatch.base = SystemClock.elapsedRealtime() - offset
